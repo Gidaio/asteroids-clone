@@ -9,6 +9,8 @@ export default class Game {
 	private renderer: Renderer
 	private input: Input
 
+	private previousTimestamp: DOMHighResTimeStamp
+
 	public constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this.gameState = {
 			player: new Player()
@@ -21,14 +23,18 @@ export default class Game {
 			down: false,
 			space: false
 		}
+		this.previousTimestamp = performance.now()
+
 		document.addEventListener("keydown", this.processInput.bind(this))
 		document.addEventListener("keyup", this.processInput.bind(this))
 		this.queueFrame()
 	}
 
 	private loop(timestamp: DOMHighResTimeStamp) {
-		this.gameState.player.update(this.input)
+		const delta = (timestamp - this.previousTimestamp) / 1000
+		this.gameState.player.update(delta, this.input)
 		this.renderer.render(this.gameState)
+		this.previousTimestamp = timestamp
 		this.queueFrame()
 	}
 
