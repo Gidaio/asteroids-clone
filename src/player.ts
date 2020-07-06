@@ -2,9 +2,10 @@ import type { Input, Vector2 } from "./types"
 
 
 export default class Player {
-	private static readonly ROTATION_RATE = 0.1
+	private static readonly TORQUE = 4
 	private static readonly ACCELERATION = 0.5
-	private static readonly FRICTION_COEFFICIENT = 0.05
+	private static readonly LINEAR_FRICTION = 0.05
+	private static readonly ANGULAR_FRICTION = 0.5
 
 	public get position(): Vector2 {
 		return this._position
@@ -15,28 +16,35 @@ export default class Player {
 	}
 
 	private _position: Vector2
-	private _velocity: Vector2
+	private _linearVelocity: Vector2
 	private _rotation: number
+	private _angularVelocity: number
 
 	public constructor() {
 		this._position = { x: 0, y: 0 }
-		this._velocity = { x: 0, y: 0 }
+		this._linearVelocity = { x: 0, y: 0 }
 		this._rotation = 0
+		this._angularVelocity = 0
 	}
 
 	public update(delta: number, input: Input): void {
-		this.handleRotation(input)
+		this.handleRotation(delta, input)
 		this.handlePosition(delta, input)
 	}
 
-	private handleRotation(input: Input): void {
+	private handleRotation(delta: number, input: Input): void {
+		let torque = 0
+
 		if (input.right) {
-			this._rotation -= Player.ROTATION_RATE
+			torque -= Player.TORQUE
 		}
 
 		if (input.left) {
-			this._rotation += Player.ROTATION_RATE
+			torque += Player.TORQUE
 		}
+
+		this._angularVelocity += torque - this._angularVelocity * Player.ANGULAR_FRICTION
+		this._rotation += this._angularVelocity * delta
 
 		if (this._rotation > 2 * Math.PI) {
 			this._rotation -= 2 * Math.PI
@@ -52,17 +60,17 @@ export default class Player {
 			acceleration.y = Math.sin(this._rotation) * Player.ACCELERATION
 		}
 
-		this._velocity.x += acceleration.x - this._velocity.x * Player.FRICTION_COEFFICIENT
-		this._velocity.y += acceleration.y - this._velocity.y * Player.FRICTION_COEFFICIENT
-		if (Math.abs(this._velocity.x) < 0.01) {
-			this._velocity.x = 0
+		this._linearVelocity.x += acceleration.x - this._linearVelocity.x * Player.LINEAR_FRICTION
+		this._linearVelocity.y += acceleration.y - this._linearVelocity.y * Player.LINEAR_FRICTION
+		if (Math.abs(this._linearVelocity.x) < 0.01) {
+			this._linearVelocity.x = 0
 		}
-		if (Math.abs(this._velocity.y) < 0.01) {
-			this._velocity.y = 0
+		if (Math.abs(this._linearVelocity.y) < 0.01) {
+			this._linearVelocity.y = 0
 		}
 
-		this._position.x += this._velocity.x * delta
-		this._position.y += this._velocity.y * delta
+		this._position.x += this._linearVelocity.x * delta
+		this._position.y += this._linearVelocity.y * delta
 
 		if (this._position.x > 5) {
 			this._position.x -= 10
