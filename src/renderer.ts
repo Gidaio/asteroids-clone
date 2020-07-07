@@ -2,8 +2,42 @@ import type Player from "./player"
 import type { GameState } from "./types"
 
 
+type Frame = Point[]
+type Point = [number, number, boolean?]
+//						angle   radius  connect to previous (default true)
+//						(will be multiplied by pi)
+
 export default class Renderer {
 	private static readonly GAME_DIMENSION = 10
+	private static readonly PLAYER_SPRITE: Frame[] = [
+		[
+			[0, 1, false],
+			[4 / 5, 1],
+			[1, 1 / 2],
+			[6 / 5, 1],
+			[0, 1]
+		],
+		[
+			[0, 1, false],
+			[4 / 5, 1],
+			[1, 1 / 2],
+			[6 / 5, 1],
+			[0, 1],
+			[19 / 20, 5 / 8, false],
+			[1, 5 / 4],
+			[21 / 20, 5 / 8]
+		],
+		[
+			[0, 1, false],
+			[4 / 5, 1],
+			[1, 1 / 2],
+			[6 / 5, 1],
+			[0, 1],
+			[9 / 10, 3 / 4, false],
+			[1, 7 / 4],
+			[11 / 10, 3 / 4]
+		]
+	]
 
 	private canvas: HTMLCanvasElement
 	private context: CanvasRenderingContext2D
@@ -24,20 +58,22 @@ export default class Renderer {
 	private drawPlayer(player: Player): void {
 		this.context.strokeStyle = "#FFF"
 		const ppm = this.minimumDimension / Renderer.GAME_DIMENSION
-		const playerRadius = 0.25
+		const playerRadius = 0.25 * ppm
 		const playerX = player.position.x * ppm + this.canvas.width / 2
 		const playerY = -player.position.y * ppm + this.canvas.height / 2
+		const rotation = 2 * Math.PI - player.rotation
+
+		const frame = Renderer.PLAYER_SPRITE[player.frame]
 		this.context.beginPath()
-		this.context.ellipse(
-			playerX,
-			playerY,
-			playerRadius * ppm,
-			playerRadius * ppm,
-			2 * Math.PI - player.rotation,
-			0,
-			2 * Math.PI
-		)
-		this.context.lineTo(playerX, playerY)
+		for (const point of frame) {
+			const x = playerX + Math.cos(rotation + point[0] * Math.PI) * playerRadius * point[1]
+			const y = playerY + Math.sin(rotation + point[0] * Math.PI) * playerRadius * point[1]
+			if (point.length === 3 && !point[2]) {
+				this.context.moveTo(x, y)
+			} else {
+				this.context.lineTo(x, y)
+			}
+		}
 		this.context.stroke()
 	}
 

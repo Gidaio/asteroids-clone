@@ -6,30 +6,38 @@ export default class Player {
 	private static readonly ACCELERATION = 0.5
 	private static readonly LINEAR_FRICTION = 0.05
 	private static readonly ANGULAR_FRICTION = 0.5
+	private static readonly FRAMES_PER_SECOND = 10
 
+
+	private _position: Vector2
+	private _linearVelocity: Vector2
 	public get position(): Vector2 {
 		return this._position
 	}
 
+	private _rotation: number
+	private _angularVelocity: number
 	public get rotation(): number {
 		return this._rotation
 	}
 
-	private _position: Vector2
-	private _linearVelocity: Vector2
-	private _rotation: number
-	private _angularVelocity: number
+	private _frame: number
+	public get frame(): number {
+		return Math.floor(this._frame)
+	}
 
 	public constructor() {
 		this._position = { x: 0, y: 0 }
 		this._linearVelocity = { x: 0, y: 0 }
 		this._rotation = 0
 		this._angularVelocity = 0
+		this._frame = 0
 	}
 
 	public update(delta: number, input: Input): void {
 		this.handleRotation(delta, input)
 		this.handlePosition(delta, input)
+		this.handleAnimation(delta, input)
 	}
 
 	private handleRotation(delta: number, input: Input): void {
@@ -82,6 +90,21 @@ export default class Player {
 			this._position.y -= 10
 		} else if (this._position.y < -5) {
 			this._position.y += 10
+		}
+	}
+
+	private handleAnimation(delta: number, input: Input): void {
+		if (input.up) {
+			if (this._frame < 1) {
+				this._frame += 1
+			}
+
+			this._frame += delta * Player.FRAMES_PER_SECOND
+			if (this._frame >= 3) {
+				this._frame -= 2
+			}
+		} else {
+			this._frame = 0
 		}
 	}
 }
