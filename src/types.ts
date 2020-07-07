@@ -12,8 +12,3 @@ export interface Input {
 	down: boolean
 	space: boolean
 }
-
-export interface Vector2 {
-	x: number
-	y: number
-}

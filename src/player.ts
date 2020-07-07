@@ -1,4 +1,5 @@
-import type { Input, Vector2 } from "./types"
+import type { Input } from "./types"
+import Vector2 from "./vector2.js"
 
 
 export default class Player {
@@ -27,8 +28,8 @@ export default class Player {
 	}
 
 	public constructor() {
-		this._position = { x: 0, y: 0 }
-		this._linearVelocity = { x: 0, y: 0 }
+		this._position = new Vector2(0, 0)
+		this._linearVelocity = new Vector2(0, 0)
 		this._rotation = 0
 		this._angularVelocity = 0
 		this._frame = 0
@@ -62,14 +63,14 @@ export default class Player {
 	}
 
 	private handlePosition(delta: number, input: Input): void {
-		const acceleration: Vector2 = { x: 0, y: 0 }
+		const acceleration = new Vector2(0, 0)
 		if (input.up) {
 			acceleration.x = Math.cos(this._rotation) * Player.ACCELERATION
 			acceleration.y = Math.sin(this._rotation) * Player.ACCELERATION
 		}
 
-		this._linearVelocity.x += acceleration.x - this._linearVelocity.x * Player.LINEAR_FRICTION
-		this._linearVelocity.y += acceleration.y - this._linearVelocity.y * Player.LINEAR_FRICTION
+		this._linearVelocity = this._linearVelocity.add(acceleration).subtract(this._linearVelocity.multiply(Player.LINEAR_FRICTION))
+
 		if (Math.abs(this._linearVelocity.x) < 0.01) {
 			this._linearVelocity.x = 0
 		}
@@ -77,8 +78,7 @@ export default class Player {
 			this._linearVelocity.y = 0
 		}
 
-		this._position.x += this._linearVelocity.x * delta
-		this._position.y += this._linearVelocity.y * delta
+		this._position = this._position.add(this._linearVelocity.multiply(delta))
 
 		if (this._position.x > 5) {
 			this._position.x -= 10
