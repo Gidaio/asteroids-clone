@@ -18,9 +18,9 @@ export default class Game {
 			player: new Player(),
 			asteroids: [
 				new Asteroid(new Vector2(2, 2)),
-				new Asteroid(new Vector2(2, -2)),
-				new Asteroid(new Vector2(-2, -2)),
-				new Asteroid(new Vector2(-2, 2))
+				new Asteroid(new Vector2(2, -2), 1.5),
+				new Asteroid(new Vector2(-2, -2), 2),
+				new Asteroid(new Vector2(-2, 2), 1.5)
 			]
 		}
 		this.renderer = new Renderer(canvas, context)

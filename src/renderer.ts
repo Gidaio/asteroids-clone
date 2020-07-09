@@ -94,7 +94,7 @@ export default class Renderer {
 	private drawAsteroid(asteroid: Asteroid): void {
 		const asteroidCanvasPosition = this.getCanvasPosition(asteroid.position)
 		const asteroidCanvasRotation = 2 * Math.PI - asteroid.rotation
-		const asteroidCanvasRadius = 0.25 * this.ppm
+		const asteroidCanvasRadius = 0.25 * asteroid.size * this.ppm
 
 		const asteroidSprite: Sprite = asteroid.pointRadii.map((radius, index) => [index * 2 / 9, radius])
 		asteroidSprite.push([0, asteroid.pointRadii[0]])

@@ -21,11 +21,15 @@ export default class Asteroid {
 
 	private _rotationRate: number
 
-	public constructor(position: Vector2) {
+	public readonly size: number
+
+	public constructor(position: Vector2, size: number = 1) {
 		this._position = position
 		this._pointRadii = new Array<number>(9).fill(0).map(() => 1 - Math.random() / 2) as PointRadii
 		this._rotation = Math.random() * 2 * Math.PI
-		this._rotationRate = Math.random() * Math.PI
+		this._rotationRate = Math.random() * Math.PI / size
+
+		this.size = size
 	}
 
 	public update(delta: number): void {
