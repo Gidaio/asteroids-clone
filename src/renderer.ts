@@ -105,7 +105,7 @@ export default class Renderer {
 
 		this.context.beginPath()
 		for (let pointIndex = 0; pointIndex < 9; pointIndex++) {
-			const angle = pointIndex * 2 * Math.PI / 9
+			const angle = pointIndex * 2 * Math.PI / 9 + asteroid.rotation
 
 			const asteroidRadius = 0.25 * ppm * asteroid.pointRadii[pointIndex]
 			const asteroidPosition = asteroid.position.multiply(ppm).add(new Vector2(this.canvas.width, this.canvas.height).multiply(0.5))

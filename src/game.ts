@@ -16,7 +16,12 @@ export default class Game {
 	public constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this.gameState = {
 			player: new Player(),
-			asteroids: [new Asteroid(new Vector2(2, 2))]
+			asteroids: [
+				new Asteroid(new Vector2(2, 2)),
+				new Asteroid(new Vector2(2, -2)),
+				new Asteroid(new Vector2(-2, -2)),
+				new Asteroid(new Vector2(-2, 2))
+			]
 		}
 		this.renderer = new Renderer(canvas, context)
 		this.input = {

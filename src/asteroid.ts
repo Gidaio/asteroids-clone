@@ -14,8 +14,14 @@ export default class Asteroid {
 		return this._pointRadii
 	}
 
+	private _rotation: number
+	public get rotation(): number {
+		return this._rotation
+	}
+
 	public constructor(position: Vector2) {
 		this._position = position
-		this._pointRadii = new Array<number>(9).fill(0).map(() => 1 - Math.random() / 4) as PointRadii
+		this._pointRadii = new Array<number>(9).fill(0).map(() => 1 - Math.random() / 2) as PointRadii
+		this._rotation = Math.random() * 2 * Math.PI
 	}
 }
