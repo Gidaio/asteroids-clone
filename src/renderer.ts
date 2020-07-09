@@ -5,14 +5,14 @@ import type { GameState } from "./types"
 import Vector2 from "./vector2.js"
 
 
-type Frame = Point[]
+type Sprite = Point[]
 type Point = [number, number, boolean?]
 //						angle   radius  connect to previous (default true)
 //						(will be multiplied by pi)
 
 export default class Renderer {
 	private static readonly GAME_DIMENSION = 10
-	private static readonly PLAYER_SPRITE: Frame[] = [
+	private static readonly PLAYER_SPRITE: Sprite[] = [
 		[
 			[0, 1, false],
 			[4 / 5, 1],
@@ -44,54 +44,45 @@ export default class Renderer {
 
 	private canvas: HTMLCanvasElement
 	private context: CanvasRenderingContext2D
-	private minimumDimension: number
+	private ppm: number
 
 	public constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this.canvas = canvas
 		this.context = context
-		this.minimumDimension = 0
+		this.ppm = 0
 	}
 
 	public render(gameState: GameState): void {
 		this.clearScreen()
 		this.drawSpace()
+		this.context.strokeStyle = "#FFF"
+		this.context.beginPath()
 		this.drawPlayer(gameState.player)
 		this.drawAsteroids(gameState.asteroids)
-	}
-
-	private drawPlayer(player: Player): void {
-		this.context.strokeStyle = "#FFF"
-		const ppm = this.minimumDimension / Renderer.GAME_DIMENSION
-		const playerRadius = 0.25 * ppm
-		const playerX = player.position.x * ppm + this.canvas.width / 2
-		const playerY = -player.position.y * ppm + this.canvas.height / 2
-		const rotation = 2 * Math.PI - player.rotation
-
-		const frame = Renderer.PLAYER_SPRITE[player.frame]
-		this.context.beginPath()
-		for (const point of frame) {
-			const x = playerX + Math.cos(rotation + point[0] * Math.PI) * playerRadius * point[1]
-			const y = playerY + Math.sin(rotation + point[0] * Math.PI) * playerRadius * point[1]
-			if (point.length === 3 && !point[2]) {
-				this.context.moveTo(x, y)
-			} else {
-				this.context.lineTo(x, y)
-			}
-		}
 		this.context.stroke()
-	}
-
-	private drawSpace(): void {
-		this.context.fillStyle = "#000"
-		this.minimumDimension = Math.min(this.canvas.width, this.canvas.height)
-		const top = this.canvas.height / 2 - this.minimumDimension / 2
-		const left = this.canvas.width / 2 - this.minimumDimension / 2
-		this.context.fillRect(left, top, this.minimumDimension, this.minimumDimension)
 	}
 
 	private clearScreen(): void {
 		this.context.fillStyle = "#FFF"
 		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
+	}
+
+	private drawSpace(): void {
+		this.context.fillStyle = "#000"
+		const minimumDimension = Math.min(this.canvas.width, this.canvas.height)
+		const top = this.canvas.height / 2 - minimumDimension / 2
+		const left = this.canvas.width / 2 - minimumDimension / 2
+		this.context.fillRect(left, top, minimumDimension, minimumDimension)
+		this.ppm = minimumDimension / Renderer.GAME_DIMENSION
+	}
+
+	private drawPlayer(player: Player): void {
+		const playerCanvasPosition = this.getCanvasPosition(player.position)
+		const playerCanvasRotation = 2 * Math.PI - player.rotation
+		const playerCanvasRadius = 0.25 * this.ppm
+
+		const frame = Renderer.PLAYER_SPRITE[player.frame]
+		this.drawPolarSprite(frame, playerCanvasPosition, playerCanvasRotation, playerCanvasRadius)
 	}
 
 	private drawAsteroids(asteroids: Asteroid[]): void {
@@ -101,22 +92,35 @@ export default class Renderer {
 	}
 
 	private drawAsteroid(asteroid: Asteroid): void {
-		const ppm = this.minimumDimension / Renderer.GAME_DIMENSION
+		const asteroidCanvasPosition = this.getCanvasPosition(asteroid.position)
+		const asteroidCanvasRotation = 2 * Math.PI - asteroid.rotation
+		const asteroidCanvasRadius = 0.25 * this.ppm
 
-		this.context.beginPath()
-		for (let pointIndex = 0; pointIndex < 9; pointIndex++) {
-			const angle = pointIndex * 2 * Math.PI / 9 + asteroid.rotation
+		const asteroidSprite: Sprite = asteroid.pointRadii.map((radius, index) => [index * 2 / 9, radius])
+		asteroidSprite.push([0, asteroid.pointRadii[0]])
+		asteroidSprite[0][2] = false
+		this.drawPolarSprite(asteroidSprite, asteroidCanvasPosition, asteroidCanvasRotation, asteroidCanvasRadius)
+	}
 
-			const asteroidRadius = 0.25 * ppm * asteroid.pointRadii[pointIndex]
-			const asteroidPosition = asteroid.position.multiply(ppm).add(new Vector2(this.canvas.width, this.canvas.height).multiply(0.5))
-			const pointPosition = asteroidPosition.add(new Vector2(Math.cos(angle), Math.sin(angle)).multiply(asteroidRadius))
-			this.context.lineTo(
-				pointPosition.x,
-				pointPosition.y
-			)
+	private drawPolarSprite(sprite: Sprite, canvasPosition: Vector2, canvasRotation: number, canvasRadius: number): void {
+		for (const point of sprite) {
+			const x = canvasPosition.x + Math.cos(canvasRotation + point[0] * Math.PI) * canvasRadius * point[1]
+			const y = canvasPosition.y + Math.sin(canvasRotation + point[0] * Math.PI) * canvasRadius * point[1]
+			if (point.length === 3 && !point[2]) {
+				this.context.moveTo(x, y)
+			} else {
+				this.context.lineTo(x, y)
+			}
 		}
+	}
 
-		this.context.closePath()
-		this.context.stroke()
+	private getCanvasPosition(position: Vector2): Vector2 {
+		return this.flipY(position)
+			.multiply(this.ppm)
+			.add(new Vector2(this.canvas.width, this.canvas.height).multiply(0.5))
+	}
+
+	private flipY(vector: Vector2): Vector2 {
+		return new Vector2(vector.x, -vector.y)
 	}
 }

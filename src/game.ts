@@ -41,6 +41,7 @@ export default class Game {
 	private loop(timestamp: DOMHighResTimeStamp) {
 		const delta = (timestamp - this.previousTimestamp) / 1000
 		this.gameState.player.update(delta, this.input)
+		this.gameState.asteroids.forEach(asteroid => asteroid.update(delta))
 		this.renderer.render(this.gameState)
 		this.previousTimestamp = timestamp
 		this.queueFrame()
