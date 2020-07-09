@@ -1,7 +1,9 @@
 import type { GameState, Input } from "./types"
 
-import Renderer from "./renderer.js"
+import Asteroid from "./asteroid.js"
 import Player from "./player.js"
+import Renderer from "./renderer.js"
+import Vector2 from "./vector2.js"
 
 
 export default class Game {
@@ -13,7 +15,8 @@ export default class Game {
 
 	public constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this.gameState = {
-			player: new Player()
+			player: new Player(),
+			asteroids: [new Asteroid(new Vector2(2, 2))]
 		}
 		this.renderer = new Renderer(canvas, context)
 		this.input = {

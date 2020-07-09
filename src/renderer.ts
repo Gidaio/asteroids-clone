@@ -1,5 +1,8 @@
+import type Asteroid from "./asteroid"
 import type Player from "./player"
 import type { GameState } from "./types"
+
+import Vector2 from "./vector2.js"
 
 
 type Frame = Point[]
@@ -53,6 +56,7 @@ export default class Renderer {
 		this.clearScreen()
 		this.drawSpace()
 		this.drawPlayer(gameState.player)
+		this.drawAsteroids(gameState.asteroids)
 	}
 
 	private drawPlayer(player: Player): void {
@@ -88,5 +92,31 @@ export default class Renderer {
 	private clearScreen(): void {
 		this.context.fillStyle = "#FFF"
 		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
+	}
+
+	private drawAsteroids(asteroids: Asteroid[]): void {
+		for (const asteroid of asteroids) {
+			this.drawAsteroid(asteroid)
+		}
+	}
+
+	private drawAsteroid(asteroid: Asteroid): void {
+		const ppm = this.minimumDimension / Renderer.GAME_DIMENSION
+
+		this.context.beginPath()
+		for (let pointIndex = 0; pointIndex < 9; pointIndex++) {
+			const angle = pointIndex * 2 * Math.PI / 9
+
+			const asteroidRadius = 0.25 * ppm * asteroid.pointRadii[pointIndex]
+			const asteroidPosition = asteroid.position.multiply(ppm).add(new Vector2(this.canvas.width, this.canvas.height).multiply(0.5))
+			const pointPosition = asteroidPosition.add(new Vector2(Math.cos(angle), Math.sin(angle)).multiply(asteroidRadius))
+			this.context.lineTo(
+				pointPosition.x,
+				pointPosition.y
+			)
+		}
+
+		this.context.closePath()
+		this.context.stroke()
 	}
 }
