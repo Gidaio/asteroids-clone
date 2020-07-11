@@ -57,7 +57,9 @@ export default class Renderer {
 		this.drawSpace()
 		this.context.strokeStyle = "#FFF"
 		this.context.beginPath()
-		this.drawPlayer(gameState.player)
+		if (gameState.player) {
+			this.drawPlayer(gameState.player)
+		}
 		this.drawAsteroids(gameState.asteroids)
 		this.context.stroke()
 	}
@@ -79,7 +81,7 @@ export default class Renderer {
 	private drawPlayer(player: Player): void {
 		const playerCanvasPosition = this.getCanvasPosition(player.position)
 		const playerCanvasRotation = 2 * Math.PI - player.rotation
-		const playerCanvasRadius = 0.25 * this.ppm
+		const playerCanvasRadius = player.RADIUS * this.ppm
 
 		const frame = Renderer.PLAYER_SPRITE[player.frame]
 		this.drawPolarSprite(frame, playerCanvasPosition, playerCanvasRotation, playerCanvasRadius)
@@ -94,7 +96,7 @@ export default class Renderer {
 	private drawAsteroid(asteroid: Asteroid): void {
 		const asteroidCanvasPosition = this.getCanvasPosition(asteroid.position)
 		const asteroidCanvasRotation = 2 * Math.PI - asteroid.rotation
-		const asteroidCanvasRadius = 0.25 * asteroid.size * this.ppm
+		const asteroidCanvasRadius = asteroid.RADIUS * this.ppm
 
 		const asteroidSprite: Sprite = asteroid.pointRadii.map((radius, index) => [index * 2 / 9, radius])
 		asteroidSprite.push([0, asteroid.pointRadii[0]])

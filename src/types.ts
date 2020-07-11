@@ -3,7 +3,7 @@ import type Player from "./player"
 
 
 export interface GameState {
-	player: Player
+	player: Player | null
 	asteroids: Asteroid[]
 }
 

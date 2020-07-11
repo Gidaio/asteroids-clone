@@ -30,4 +30,8 @@ export default class Vector2 {
 	public multiply(scalar: number): Vector2 {
 		return new Vector2(this.x * scalar, this.y * scalar)
 	}
+
+	public magnitudeSquared(): number {
+		return this.x ** 2 + this.y ** 2
+	}
 }

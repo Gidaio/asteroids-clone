@@ -40,8 +40,22 @@ export default class Game {
 
 	private loop(timestamp: DOMHighResTimeStamp) {
 		const delta = (timestamp - this.previousTimestamp) / 1000
-		this.gameState.player.update(delta, this.input)
+
+		if (this.gameState.player) {
+			this.gameState.player.update(delta, this.input)
+		}
 		this.gameState.asteroids.forEach(asteroid => asteroid.update(delta))
+
+		if (this.gameState.player) {
+			const player = this.gameState.player
+			this.gameState.asteroids.forEach(asteroid => {
+				const distanceSquaredFromPlayer = player.position.subtract(asteroid.position).magnitudeSquared()
+				if (distanceSquaredFromPlayer < (player.RADIUS + asteroid.RADIUS) ** 2) {
+					this.destroyPlayer()
+				}
+			})
+		}
+
 		this.renderer.render(this.gameState)
 		this.previousTimestamp = timestamp
 		this.queueFrame()
@@ -75,5 +89,10 @@ export default class Game {
 				this.input.space = isKeyDown
 				break
 		}
+	}
+
+
+	public destroyPlayer(): void {
+		this.gameState.player = null
 	}
 }

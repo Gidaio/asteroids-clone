@@ -3,6 +3,8 @@ import Vector2 from "./vector2.js"
 
 
 export default class Player {
+	public readonly RADIUS = 0.25
+
 	private static readonly TORQUE = 4
 	private static readonly ACCELERATION = 0.5
 	private static readonly LINEAR_FRICTION = 0.05

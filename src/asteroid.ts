@@ -4,6 +4,8 @@ import Vector2 from "./vector2.js"
 type PointRadii = [number, number, number, number, number, number, number, number, number]
 
 export default class Asteroid {
+	public readonly RADIUS: number
+
 	private _position: Vector2
 	public get position(): Vector2 {
 		return this._position
@@ -26,8 +28,6 @@ export default class Asteroid {
 
 	private _rotationRate: number
 
-	public readonly size: number
-
 	public constructor(position: Vector2, size: number, speed: number) {
 		this._position = position
 		this._pointRadii = new Array<number>(9).fill(0).map(() => 1 - Math.random() / 2) as PointRadii
@@ -38,7 +38,7 @@ export default class Asteroid {
 		const actualSpeed = (speed + Math.random() * speed - speed / 2) / size
 		this._velocity = new Vector2(Math.cos(direction), Math.sin(direction)).multiply(actualSpeed)
 
-		this.size = size
+		this.RADIUS = 0.25 * size
 	}
 
 	public update(delta: number): void {
