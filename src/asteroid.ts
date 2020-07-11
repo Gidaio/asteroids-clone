@@ -9,6 +9,11 @@ export default class Asteroid {
 		return this._position
 	}
 
+	private _velocity: Vector2
+	public get velocity(): Vector2 {
+		return this._velocity
+	}
+
 	private _pointRadii: PointRadii
 	public get pointRadii(): PointRadii {
 		return this._pointRadii
@@ -23,16 +28,27 @@ export default class Asteroid {
 
 	public readonly size: number
 
-	public constructor(position: Vector2, size: number = 1) {
+	public constructor(position: Vector2, size: number, speed: number) {
 		this._position = position
 		this._pointRadii = new Array<number>(9).fill(0).map(() => 1 - Math.random() / 2) as PointRadii
 		this._rotation = Math.random() * 2 * Math.PI
 		this._rotationRate = Math.random() * Math.PI / size
+
+		const direction = Math.random() * 2 * Math.PI
+		const actualSpeed = (speed + Math.random() * speed - speed / 2) / size
+		this._velocity = new Vector2(Math.cos(direction), Math.sin(direction)).multiply(actualSpeed)
 
 		this.size = size
 	}
 
 	public update(delta: number): void {
 		this._rotation += this._rotationRate * delta
+		this._position = this._position.add(this._velocity.multiply(delta))
+		if (Math.abs(this._position.x) > 5) {
+			this._position.x -= Math.sign(this._position.x) * 10
+		}
+		if (Math.abs(this._position.y) > 5) {
+			this._position.y -= Math.sign(this._position.y) * 10
+		}
 	}
 }

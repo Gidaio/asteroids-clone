@@ -17,10 +17,10 @@ export default class Game {
 		this.gameState = {
 			player: new Player(),
 			asteroids: [
-				new Asteroid(new Vector2(2, 2)),
-				new Asteroid(new Vector2(2, -2), 1.5),
-				new Asteroid(new Vector2(-2, -2), 2),
-				new Asteroid(new Vector2(-2, 2), 1.5)
+				new Asteroid(new Vector2(2, 2), 1, 1),
+				new Asteroid(new Vector2(2, -2), 1.5, 1),
+				new Asteroid(new Vector2(-2, -2), 2, 1),
+				new Asteroid(new Vector2(-2, 2), 1.5, 1)
 			]
 		}
 		this.renderer = new Renderer(canvas, context)
