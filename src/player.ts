@@ -1,9 +1,11 @@
 import type { Input } from "./types"
+import Entity from "./entity.js"
 import Vector2 from "./vector2.js"
 
 
-export default class Player {
+export default class Player extends Entity {
 	public readonly RADIUS = 0.25
+	public readonly type = "PLAYER"
 
 	private static readonly TORQUE = 4
 	private static readonly ACCELERATION = 0.5
@@ -30,6 +32,7 @@ export default class Player {
 	}
 
 	public constructor() {
+		super()
 		this._position = new Vector2(0, 0)
 		this._linearVelocity = new Vector2(0, 0)
 		this._rotation = 0
