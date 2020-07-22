@@ -57,10 +57,21 @@ export default class Renderer {
 		this.drawSpace()
 		this.context.strokeStyle = "#FFF"
 		this.context.beginPath()
-		if (gameState.player) {
-			this.drawPlayer(gameState.player)
-		}
-		this.drawAsteroids(gameState.asteroids)
+		gameState.entities.forEach(entity => {
+			switch (entity.type) {
+				case "PLAYER":
+					this.drawPlayer(entity as Player)
+					break
+
+				case "ASTEROID":
+					this.drawAsteroid(entity as Asteroid)
+					break
+
+				default:
+					console.warn(`Can't draw entity of type '${entity.type}'.`)
+					break
+			}
+		})
 		this.context.stroke()
 	}
 
@@ -85,12 +96,6 @@ export default class Renderer {
 
 		const frame = Renderer.PLAYER_SPRITE[player.frame]
 		this.drawPolarSprite(frame, playerCanvasPosition, playerCanvasRotation, playerCanvasRadius)
-	}
-
-	private drawAsteroids(asteroids: Asteroid[]): void {
-		for (const asteroid of asteroids) {
-			this.drawAsteroid(asteroid)
-		}
 	}
 
 	private drawAsteroid(asteroid: Asteroid): void {

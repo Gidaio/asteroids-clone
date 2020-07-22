@@ -15,8 +15,8 @@ export default class Game {
 
 	public constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this.gameState = {
-			player: new Player(),
-			asteroids: [
+			entities: [
+				new Player(),
 				new Asteroid(new Vector2(2, 2), 1, 1),
 				new Asteroid(new Vector2(2, -2), 1.5, 1),
 				new Asteroid(new Vector2(-2, -2), 2, 1),
@@ -41,20 +41,7 @@ export default class Game {
 	private loop(timestamp: DOMHighResTimeStamp) {
 		const delta = (timestamp - this.previousTimestamp) / 1000
 
-		if (this.gameState.player) {
-			this.gameState.player.update(delta, this.input)
-		}
-		this.gameState.asteroids.forEach(asteroid => asteroid.update(delta))
-
-		if (this.gameState.player) {
-			const player = this.gameState.player
-			this.gameState.asteroids.forEach(asteroid => {
-				const distanceSquaredFromPlayer = player.position.subtract(asteroid.position).magnitudeSquared()
-				if (distanceSquaredFromPlayer < (player.RADIUS + asteroid.RADIUS) ** 2) {
-					this.destroyPlayer()
-				}
-			})
-		}
+		this.gameState.entities.forEach(entity => entity.update(delta, this.input))
 
 		this.renderer.render(this.gameState)
 		this.previousTimestamp = timestamp
@@ -89,10 +76,5 @@ export default class Game {
 				this.input.space = isKeyDown
 				break
 		}
-	}
-
-
-	public destroyPlayer(): void {
-		this.gameState.player = null
 	}
 }

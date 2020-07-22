@@ -1,10 +1,8 @@
-import type Asteroid from "./asteroid"
-import type Player from "./player"
+import type Entity from "./entity"
 
 
 export interface GameState {
-	player: Player | null
-	asteroids: Asteroid[]
+	entities: Entity[]
 }
 
 export interface Input {
