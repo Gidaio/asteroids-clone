@@ -1,7 +1,6 @@
 import type Asteroid from "./asteroid"
 import type Player from "./player"
 import type { GameState } from "./types"
-
 import Vector2 from "./vector2.js"
 
 
@@ -58,7 +57,7 @@ export default class Renderer {
 		this.context.strokeStyle = "#FFF"
 		this.context.beginPath()
 		gameState.entities.forEach(entity => {
-			switch (entity.type) {
+			switch (entity.TYPE) {
 				case "PLAYER":
 					this.drawPlayer(entity as Player)
 					break
@@ -68,7 +67,7 @@ export default class Renderer {
 					break
 
 				default:
-					console.warn(`Can't draw entity of type '${entity.type}'.`)
+					console.warn(`Can't draw entity of type '${entity.TYPE}'.`)
 					break
 			}
 		})

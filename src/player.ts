@@ -1,11 +1,12 @@
-import type { Input } from "./types"
 import Entity from "./entity.js"
+import type Game from "./game"
+import type { Input } from "./types"
 import Vector2 from "./vector2.js"
 
 
 export default class Player extends Entity {
 	public readonly RADIUS = 0.25
-	public readonly type = "PLAYER"
+	public readonly TYPE = "PLAYER"
 
 	private static readonly TORQUE = 4
 	private static readonly ACCELERATION = 0.5
@@ -13,13 +14,7 @@ export default class Player extends Entity {
 	private static readonly ANGULAR_FRICTION = 0.5
 	private static readonly FRAMES_PER_SECOND = 10
 
-
-	private _position: Vector2
 	private _linearVelocity: Vector2
-	public get position(): Vector2 {
-		return this._position
-	}
-
 	private _rotation: number
 	private _angularVelocity: number
 	public get rotation(): number {
@@ -31,8 +26,8 @@ export default class Player extends Entity {
 		return Math.floor(this._frame)
 	}
 
-	public constructor() {
-		super()
+	public constructor(game: Game) {
+		super(game)
 		this._position = new Vector2(0, 0)
 		this._linearVelocity = new Vector2(0, 0)
 		this._rotation = 0
@@ -44,6 +39,13 @@ export default class Player extends Entity {
 		this.handleRotation(delta, input)
 		this.handlePosition(delta, input)
 		this.handleAnimation(delta, input)
+	}
+
+	public onCollision(entity: Entity): void {
+		if (entity.TYPE === "ASTEROID") {
+			console.log(this, entity)
+			this.game.destroyEntity(this)
+		}
 	}
 
 	private handleRotation(delta: number, input: Input): void {

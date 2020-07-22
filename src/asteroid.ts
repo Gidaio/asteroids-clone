@@ -1,17 +1,13 @@
-import Vector2 from "./vector2.js"
 import Entity from "./entity.js"
+import type Game from "./game"
+import Vector2 from "./vector2.js"
 
 
 type PointRadii = [number, number, number, number, number, number, number, number, number]
 
 export default class Asteroid extends Entity {
 	public readonly RADIUS: number
-	public readonly type = "ASTEROID"
-
-	private _position: Vector2
-	public get position(): Vector2 {
-		return this._position
-	}
+	public readonly TYPE = "ASTEROID"
 
 	private _velocity: Vector2
 	public get velocity(): Vector2 {
@@ -30,8 +26,8 @@ export default class Asteroid extends Entity {
 
 	private _rotationRate: number
 
-	public constructor(position: Vector2, size: number, speed: number) {
-		super()
+	public constructor(game: Game, position: Vector2, size: number, speed: number) {
+		super(game)
 
 		this._position = position
 		this._pointRadii = new Array<number>(9).fill(0).map(() => 1 - Math.random() / 2) as PointRadii
