@@ -1,5 +1,4 @@
 import Entity from "./entity.js"
-import type Game from "./game"
 import type { Input } from "./types"
 import Vector2 from "./vector2.js"
 
@@ -14,28 +13,19 @@ export default class Player extends Entity {
 	private static readonly ANGULAR_FRICTION = 0.5
 	private static readonly FRAMES_PER_SECOND = 10
 
-	private _linearVelocity: Vector2
-	private _rotation: number
-	private _angularVelocity: number
+	private _linearVelocity = new Vector2(0, 0)
+	private _rotation = 0
+	private _angularVelocity = 0
 	public get rotation(): number {
 		return this._rotation
 	}
 
-	private _frame: number
+	private _frame = 0
 	public get frame(): number {
 		return Math.floor(this._frame)
 	}
 
-	public constructor(game: Game) {
-		super(game)
-		this._position = new Vector2(0, 0)
-		this._linearVelocity = new Vector2(0, 0)
-		this._rotation = 0
-		this._angularVelocity = 0
-		this._frame = 0
-	}
-
-	public update(delta: number, input: Input): void {
+	public onUpdate(delta: number, input: Input): void {
 		this.handleRotation(delta, input)
 		this.handlePosition(delta, input)
 		this.handleAnimation(delta, input)

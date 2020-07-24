@@ -17,6 +17,7 @@ export default abstract class Entity {
 		this.game = game
 	}
 
-	public update(delta: number, input: Input): void {}
+	public onCreate(): void {}
+	public onUpdate(delta: number, input: Input): void {}
 	public onCollision(entity: Entity): void {}
 }

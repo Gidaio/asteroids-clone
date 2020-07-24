@@ -3,40 +3,42 @@ import type Entity from "./entity.js"
 import Player from "./player.js"
 import Renderer from "./renderer.js"
 import type { GameState, Input } from "./types"
-import Vector2 from "./vector2.js"
 
 
 export default class Game {
-	private gameState: GameState
+	private gameState: GameState = {
+		entities: []
+	}
 	private renderer: Renderer
-	private input: Input
+	private input: Input = {
+		right: false,
+		up: false,
+		left: false,
+		down: false,
+		space: false
+	}
 	private entitiesToDestroy: Entity[] = []
-
-	private previousTimestamp: DOMHighResTimeStamp
+	private previousTimestamp: DOMHighResTimeStamp = performance.now()
 
 	public constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
-		this.gameState = {
-			entities: [
-				new Player(this),
-				new Asteroid(this, new Vector2(2, 2), 1, 1),
-				new Asteroid(this, new Vector2(2, -2), 1.5, 1),
-				new Asteroid(this, new Vector2(-2, -2), 2, 1),
-				new Asteroid(this, new Vector2(-2, 2), 1.5, 1)
-			]
-		}
 		this.renderer = new Renderer(canvas, context)
-		this.input = {
-			right: false,
-			up: false,
-			left: false,
-			down: false,
-			space: false
-		}
-		this.previousTimestamp = performance.now()
+		this.instantiateEntity(Player)
+		this.instantiateEntity(Asteroid)
+		this.instantiateEntity(Asteroid)
+		this.instantiateEntity(Asteroid)
+		this.instantiateEntity(Asteroid)
 
 		document.addEventListener("keydown", this.processInput.bind(this))
 		document.addEventListener("keyup", this.processInput.bind(this))
 		this.queueFrame()
+	}
+
+	public instantiateEntity<T extends Entity>(entityType: new (game: Game) => T): T {
+		const entity = new entityType(this)
+		entity.onCreate()
+		this.gameState.entities.push(entity)
+
+		return entity
 	}
 
 	public destroyEntity(entity: Entity): void {
@@ -47,7 +49,7 @@ export default class Game {
 		const delta = (timestamp - this.previousTimestamp) / 1000
 
 		// Updates
-		this.gameState.entities.forEach(entity => entity.update(delta, this.input))
+		this.gameState.entities.forEach(entity => entity.onUpdate(delta, this.input))
 
 		// Collisions
 		this.gameState.entities.forEach((entity, index) => {
