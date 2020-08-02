@@ -1,5 +1,5 @@
 import type Game from "./game"
-import type { Input } from "./types"
+import type { Input, Sprite } from "./types"
 import Vector2 from "./vector2.js"
 
 
@@ -9,6 +9,7 @@ export default abstract class Entity {
 	public abstract readonly COLLISION_RADIUS: number
 	protected readonly game: Game
 
+	public sprites: Sprite[] = []
 	public position: Vector2 = new Vector2(0, 0)
 	public direction: number = 0
 

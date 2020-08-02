@@ -1,6 +1,46 @@
 import Entity from "./entity.js"
-import type { Input } from "./types"
+import type { Input, Sprite } from "./types"
 import Vector2 from "./vector2.js"
+
+
+const PLAYER_SPRITES: Sprite[] = [
+	{
+		drawRadius: 0.25,
+		points: [
+			[0, 1, false],
+			[4 / 5, 1],
+			[1, 1 / 2],
+			[6 / 5, 1],
+			[0, 1]
+		]
+	},
+	{
+		drawRadius: 0.25,
+		points: [
+			[0, 1, false],
+			[4 / 5, 1],
+			[1, 1 / 2],
+			[6 / 5, 1],
+			[0, 1],
+			[19 / 20, 5 / 8, false],
+			[1, 5 / 4],
+			[21 / 20, 5 / 8]
+		]
+	},
+	{
+		drawRadius: 0.25,
+		points: [
+			[0, 1, false],
+			[4 / 5, 1],
+			[1, 1 / 2],
+			[6 / 5, 1],
+			[0, 1],
+			[9 / 10, 3 / 4, false],
+			[1, 7 / 4],
+			[11 / 10, 3 / 4]
+		]
+	}
+]
 
 
 export default class Player extends Entity {
@@ -16,6 +56,8 @@ export default class Player extends Entity {
 
 	private _linearVelocity = new Vector2(0, 0)
 	private _angularVelocity = 0
+
+	public sprites = PLAYER_SPRITES
 
 	private _frame = 0
 	public get frame(): number {

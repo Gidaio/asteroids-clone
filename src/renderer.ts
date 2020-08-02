@@ -1,45 +1,11 @@
 import type Asteroid from "./asteroid"
 import type Player from "./player"
-import type { GameState } from "./types"
+import type { GameState, Sprite } from "./types"
 import Vector2 from "./vector2.js"
 
 
-type Sprite = Point[]
-type Point = [number, number, boolean?]
-//						angle   radius  connect to previous (default true)
-//						(will be multiplied by pi)
-
 export default class Renderer {
 	private static readonly GAME_DIMENSION = 10
-	private static readonly PLAYER_SPRITE: Sprite[] = [
-		[
-			[0, 1, false],
-			[4 / 5, 1],
-			[1, 1 / 2],
-			[6 / 5, 1],
-			[0, 1]
-		],
-		[
-			[0, 1, false],
-			[4 / 5, 1],
-			[1, 1 / 2],
-			[6 / 5, 1],
-			[0, 1],
-			[19 / 20, 5 / 8, false],
-			[1, 5 / 4],
-			[21 / 20, 5 / 8]
-		],
-		[
-			[0, 1, false],
-			[4 / 5, 1],
-			[1, 1 / 2],
-			[6 / 5, 1],
-			[0, 1],
-			[9 / 10, 3 / 4, false],
-			[1, 7 / 4],
-			[11 / 10, 3 / 4]
-		]
-	]
 
 	private canvas: HTMLCanvasElement
 	private context: CanvasRenderingContext2D
@@ -93,7 +59,7 @@ export default class Renderer {
 		const playerCanvasRotation = 2 * Math.PI - player.direction
 		const playerCanvasRadius = player.COLLISION_RADIUS * this.ppm
 
-		const frame = Renderer.PLAYER_SPRITE[player.frame]
+		const frame = player.sprites[player.frame]
 		this.drawPolarSprite(frame, playerCanvasPosition, playerCanvasRotation, playerCanvasRadius)
 	}
 
@@ -102,14 +68,12 @@ export default class Renderer {
 		const asteroidCanvasRotation = 2 * Math.PI - asteroid.direction
 		const asteroidCanvasRadius = asteroid.COLLISION_RADIUS * this.ppm
 
-		const asteroidSprite: Sprite = asteroid.pointRadii.map((radius, index) => [index * 2 / 9, radius])
-		asteroidSprite.push([0, asteroid.pointRadii[0]])
-		asteroidSprite[0][2] = false
+		const asteroidSprite: Sprite = asteroid.sprites[0]
 		this.drawPolarSprite(asteroidSprite, asteroidCanvasPosition, asteroidCanvasRotation, asteroidCanvasRadius)
 	}
 
 	private drawPolarSprite(sprite: Sprite, canvasPosition: Vector2, canvasRotation: number, canvasRadius: number): void {
-		for (const point of sprite) {
+		for (const point of sprite.points) {
 			const x = canvasPosition.x + Math.cos(canvasRotation + point[0] * Math.PI) * canvasRadius * point[1]
 			const y = canvasPosition.y + Math.sin(canvasRotation + point[0] * Math.PI) * canvasRadius * point[1]
 			if (point.length === 3 && !point[2]) {
