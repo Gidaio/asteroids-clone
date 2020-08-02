@@ -1,6 +1,7 @@
 import Entity from "./entity.js"
 import type { Input, Sprite } from "./types"
 import Vector2 from "./vector2.js"
+import Animator from "./animator.js"
 
 
 const PLAYER_SPRITES: Sprite[] = [
@@ -52,28 +53,35 @@ export default class Player extends Entity {
 	private static readonly ACCELERATION = 0.5
 	private static readonly LINEAR_FRICTION = 0.05
 	private static readonly ANGULAR_FRICTION = 0.5
-	private static readonly FRAMES_PER_SECOND = 10
 
 	private _linearVelocity = new Vector2(0, 0)
 	private _angularVelocity = 0
 
-	public sprites = PLAYER_SPRITES
-
-	private _frame = 0
-	public get frame(): number {
-		return Math.floor(this._frame)
-	}
+	public animator = new Animator(
+		{
+			idle: {
+				framesPerSecond: 0,
+				frames: [PLAYER_SPRITES[0]]
+			},
+			moving: {
+				framesPerSecond: 10,
+				frames: PLAYER_SPRITES.slice(1)
+			}
+		},
+		"idle"
+	)
 
 	public onUpdate(delta: number, input: Input): void {
+		super.onUpdate(delta, input)
 		this.handleRotation(delta, input)
 		this.handlePosition(delta, input)
-		this.handleAnimation(delta, input)
+		this.handleAnimation(input)
 	}
 
 	public onCollision(entity: Entity): void {
 		if (entity.TYPE === "ASTEROID") {
 			console.log(this, entity)
-			this.game.destroyEntity(this)
+			this._game.destroyEntity(this)
 		}
 	}
 
@@ -89,6 +97,11 @@ export default class Player extends Entity {
 		}
 
 		this._angularVelocity += torque - this._angularVelocity * Player.ANGULAR_FRICTION
+
+		if (Math.abs(this._angularVelocity) < 0.01) {
+			this._angularVelocity = 0
+		}
+
 		this.direction += this._angularVelocity * delta
 
 		if (this.direction > 2 * Math.PI) {
@@ -129,18 +142,11 @@ export default class Player extends Entity {
 		}
 	}
 
-	private handleAnimation(delta: number, input: Input): void {
+	private handleAnimation(input: Input): void {
 		if (input.up) {
-			if (this._frame < 1) {
-				this._frame += 1
-			}
-
-			this._frame += delta * Player.FRAMES_PER_SECOND
-			if (this._frame >= 3) {
-				this._frame -= 2
-			}
+			this.animator.setAnimation("moving")
 		} else {
-			this._frame = 0
+			this.animator.setAnimation("idle")
 		}
 	}
 }

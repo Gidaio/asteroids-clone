@@ -1,5 +1,7 @@
 import Entity from "./entity.js"
 import Vector2 from "./vector2.js"
+import { Sprite } from "./types.js"
+import Animator from "./animator.js"
 
 
 type PointRadii = [number, number, number, number, number, number, number, number, number]
@@ -29,9 +31,19 @@ export default class Asteroid extends Entity {
 		this._rotationRate = Math.random() * Math.PI / 2
 
 		const pointRadii = new Array<number>(9).fill(0).map(() => 1 - Math.random() / 2) as PointRadii
-		this.sprites = [{ drawRadius: this.COLLISION_RADIUS, points: pointRadii.map((radius, index) => [index * 2 / 9, radius]) }]
-		this.sprites[0].points.push([0, pointRadii[0]])
-		this.sprites[0].points[0][2] = false
+		const sprite: Sprite = { drawRadius: this.COLLISION_RADIUS, points: pointRadii.map((radius, index) => [index * 2 / 9, radius]) }
+		sprite.points.push([0, pointRadii[0]])
+		sprite.points[0][2] = false
+
+		this.animator = new Animator(
+			{
+				default: {
+					framesPerSecond: 0,
+					frames: [sprite]
+				}
+			},
+			"default"
+		)
 
 		const direction = Math.random() * 2 * Math.PI
 		const actualSpeed = (1 + Math.random() * 1 - 1 / 2) / 2
