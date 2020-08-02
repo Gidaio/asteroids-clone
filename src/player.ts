@@ -2,6 +2,7 @@ import Entity from "./entity.js"
 import type { Input, Sprite } from "./types"
 import Vector2 from "./vector2.js"
 import Animator from "./animator.js"
+import Shot from "./shot.js"
 
 
 const PLAYER_SPRITES: Sprite[] = [
@@ -75,6 +76,7 @@ export default class Player extends Entity {
 		super.onUpdate(delta, input)
 		this.handleRotation(delta, input)
 		this.handlePosition(delta, input)
+		this.handleShooting(input)
 		this.handleAnimation(input)
 	}
 
@@ -139,6 +141,17 @@ export default class Player extends Entity {
 			this.position.y -= 10
 		} else if (this.position.y < -5) {
 			this.position.y += 10
+		}
+	}
+
+	private handleShooting(input: Input): void {
+		if (input.space) {
+			const shot = this._game.instantiateEntity(Shot)
+			shot.position = new Vector2(
+				this.position.x + Math.cos(this.direction) * this.COLLISION_RADIUS,
+				this.position.y + Math.sin(this.direction) * this.COLLISION_RADIUS
+			)
+			shot.direction = this.direction
 		}
 	}
 
