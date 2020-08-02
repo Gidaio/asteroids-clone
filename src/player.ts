@@ -4,8 +4,9 @@ import Vector2 from "./vector2.js"
 
 
 export default class Player extends Entity {
-	public readonly RADIUS = 0.25
 	public readonly TYPE = "PLAYER"
+
+	public readonly COLLISION_RADIUS = 0.25
 
 	private static readonly TORQUE = 4
 	private static readonly ACCELERATION = 0.5

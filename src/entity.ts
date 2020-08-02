@@ -4,8 +4,9 @@ import Vector2 from "./vector2.js"
 
 
 export default abstract class Entity {
-	public abstract readonly RADIUS: number
 	public abstract readonly TYPE: string
+
+	public abstract readonly COLLISION_RADIUS: number
 	protected readonly game: Game
 
 	public position: Vector2 = new Vector2(0, 0)

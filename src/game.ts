@@ -55,7 +55,7 @@ export default class Game {
 		this.gameState.entities.forEach((entity, index) => {
 			for (let otherIndex = index + 1; otherIndex < this.gameState.entities.length; otherIndex++) {
 				let other = this.gameState.entities[otherIndex]
-				if (entity.position.subtract(other.position).magnitudeSquared() <= (entity.RADIUS + other.RADIUS) ** 2) {
+				if (entity.position.subtract(other.position).magnitudeSquared() <= (entity.COLLISION_RADIUS + other.COLLISION_RADIUS) ** 2) {
 					entity.onCollision(other)
 					other.onCollision(entity)
 				}

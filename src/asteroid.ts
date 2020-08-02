@@ -5,8 +5,11 @@ import Vector2 from "./vector2.js"
 type PointRadii = [number, number, number, number, number, number, number, number, number]
 
 export default class Asteroid extends Entity {
-	public readonly RADIUS = 0.5
 	public readonly TYPE = "ASTEROID"
+
+	public get COLLISION_RADIUS(): number {
+		return (this.size * this.size + this.size + 2) * 0.0625
+	}
 
 	private _velocity = new Vector2(0, 0)
 	public get velocity(): Vector2 {
@@ -19,6 +22,8 @@ export default class Asteroid extends Entity {
 	}
 
 	private _rotationRate = 0
+
+	public size: number = 2
 
 	public onCreate(): void {
 		let xPos = Math.random() < 0.5 ? -2 : 2
