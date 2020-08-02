@@ -14,11 +14,7 @@ export default class Player extends Entity {
 	private static readonly FRAMES_PER_SECOND = 10
 
 	private _linearVelocity = new Vector2(0, 0)
-	private _rotation = 0
 	private _angularVelocity = 0
-	public get rotation(): number {
-		return this._rotation
-	}
 
 	private _frame = 0
 	public get frame(): number {
@@ -50,20 +46,20 @@ export default class Player extends Entity {
 		}
 
 		this._angularVelocity += torque - this._angularVelocity * Player.ANGULAR_FRICTION
-		this._rotation += this._angularVelocity * delta
+		this.direction += this._angularVelocity * delta
 
-		if (this._rotation > 2 * Math.PI) {
-			this._rotation -= 2 * Math.PI
-		} else if (this._rotation < 0) {
-			this._rotation += 2 * Math.PI
+		if (this.direction > 2 * Math.PI) {
+			this.direction -= 2 * Math.PI
+		} else if (this.direction < 0) {
+			this.direction += 2 * Math.PI
 		}
 	}
 
 	private handlePosition(delta: number, input: Input): void {
 		const acceleration = new Vector2(0, 0)
 		if (input.up) {
-			acceleration.x = Math.cos(this._rotation) * Player.ACCELERATION
-			acceleration.y = Math.sin(this._rotation) * Player.ACCELERATION
+			acceleration.x = Math.cos(this.direction) * Player.ACCELERATION
+			acceleration.y = Math.sin(this.direction) * Player.ACCELERATION
 		}
 
 		this._linearVelocity = this._linearVelocity.add(acceleration).subtract(this._linearVelocity.multiply(Player.LINEAR_FRICTION))
@@ -75,18 +71,18 @@ export default class Player extends Entity {
 			this._linearVelocity.y = 0
 		}
 
-		this._position = this._position.add(this._linearVelocity.multiply(delta))
+		this.position = this.position.add(this._linearVelocity.multiply(delta))
 
-		if (this._position.x > 5) {
-			this._position.x -= 10
-		} else if (this._position.x < -5) {
-			this._position.x += 10
+		if (this.position.x > 5) {
+			this.position.x -= 10
+		} else if (this.position.x < -5) {
+			this.position.x += 10
 		}
 
-		if (this._position.y > 5) {
-			this._position.y -= 10
-		} else if (this._position.y < -5) {
-			this._position.y += 10
+		if (this.position.y > 5) {
+			this.position.y -= 10
+		} else if (this.position.y < -5) {
+			this.position.y += 10
 		}
 	}
 

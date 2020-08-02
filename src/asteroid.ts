@@ -18,20 +18,15 @@ export default class Asteroid extends Entity {
 		return this._pointRadii
 	}
 
-	private _rotation = 0
-	public get rotation(): number {
-		return this._rotation
-	}
-
 	private _rotationRate = 0
 
 	public onCreate(): void {
 		let xPos = Math.random() < 0.5 ? -2 : 2
 		let yPos = Math.random() < 0.5 ? -2 : 2
 
-		this._position = new Vector2(xPos, yPos)
+		this.position = new Vector2(xPos, yPos)
 		this._pointRadii = new Array<number>(9).fill(0).map(() => 1 - Math.random() / 2) as PointRadii
-		this._rotation = Math.random() * 2 * Math.PI
+		this.direction = Math.random() * 2 * Math.PI
 		this._rotationRate = Math.random() * Math.PI / 2
 
 		const direction = Math.random() * 2 * Math.PI
@@ -40,13 +35,13 @@ export default class Asteroid extends Entity {
 	}
 
 	public onUpdate(delta: number): void {
-		this._rotation += this._rotationRate * delta
-		this._position = this._position.add(this._velocity.multiply(delta))
-		if (Math.abs(this._position.x) > 5) {
-			this._position.x -= Math.sign(this._position.x) * 10
+		this.direction += this._rotationRate * delta
+		this.position = this.position.add(this._velocity.multiply(delta))
+		if (Math.abs(this.position.x) > 5) {
+			this.position.x -= Math.sign(this.position.x) * 10
 		}
-		if (Math.abs(this._position.y) > 5) {
-			this._position.y -= Math.sign(this._position.y) * 10
+		if (Math.abs(this.position.y) > 5) {
+			this.position.y -= Math.sign(this.position.y) * 10
 		}
 	}
 }

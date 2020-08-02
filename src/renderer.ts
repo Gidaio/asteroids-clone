@@ -90,7 +90,7 @@ export default class Renderer {
 
 	private drawPlayer(player: Player): void {
 		const playerCanvasPosition = this.getCanvasPosition(player.position)
-		const playerCanvasRotation = 2 * Math.PI - player.rotation
+		const playerCanvasRotation = 2 * Math.PI - player.direction
 		const playerCanvasRadius = player.RADIUS * this.ppm
 
 		const frame = Renderer.PLAYER_SPRITE[player.frame]
@@ -99,7 +99,7 @@ export default class Renderer {
 
 	private drawAsteroid(asteroid: Asteroid): void {
 		const asteroidCanvasPosition = this.getCanvasPosition(asteroid.position)
-		const asteroidCanvasRotation = 2 * Math.PI - asteroid.rotation
+		const asteroidCanvasRotation = 2 * Math.PI - asteroid.direction
 		const asteroidCanvasRadius = asteroid.RADIUS * this.ppm
 
 		const asteroidSprite: Sprite = asteroid.pointRadii.map((radius, index) => [index * 2 / 9, radius])
