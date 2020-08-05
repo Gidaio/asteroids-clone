@@ -1,7 +1,7 @@
-import Entity from "./entity.js"
-import Vector2 from "./vector2.js"
-import { Sprite } from "./types.js"
 import Animator from "./animator.js"
+import Entity from "./entity.js"
+import { Sprite } from "./types.js"
+import Vector2 from "./vector2.js"
 
 
 type PointRadii = [number, number, number, number, number, number, number, number, number]

@@ -1,7 +1,7 @@
-import type Game from "./game"
-import type { Input } from "./types"
-import Vector2 from "./vector2.js"
 import Animator from "./animator.js"
+import type Game from "./game"
+import type { Input } from "./input"
+import Vector2 from "./vector2.js"
 
 
 export default abstract class Entity {
@@ -18,9 +18,9 @@ export default abstract class Entity {
 		this._game = game
 	}
 
-	public onCreate(): void {}
+	public onCreate(): void { }
 	public onUpdate(delta: number, input: Input): void {
 		this.animator?.onUpdate(delta)
 	}
-	public onCollision(entity: Entity): void {}
+	public onCollision(entity: Entity): void { }
 }

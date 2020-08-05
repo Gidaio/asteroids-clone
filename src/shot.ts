@@ -1,6 +1,6 @@
-import Entity from "./entity.js"
-import type { Input, Sprite } from "./types"
 import Animator from "./animator.js"
+import Entity from "./entity.js"
+import type { Sprite } from "./types"
 
 
 const SHOT_SPRITE: Sprite = {
@@ -19,7 +19,7 @@ export default class Shot extends Entity {
 
 	public readonly COLLISION_RADIUS = 0.0625
 
-	private static readonly SPEED = 5
+	private static readonly SPEED = 10
 	private static readonly MAX_LIFETIME = 1.5
 
 	private _lifetime = 0
@@ -34,7 +34,7 @@ export default class Shot extends Entity {
 		"default"
 	)
 
-	public onUpdate(delta: number, input: Input) {
+	public onUpdate(delta: number) {
 		if (this._lifetime >= Shot.MAX_LIFETIME) {
 			this._game.destroyEntity(this)
 			return
@@ -46,7 +46,7 @@ export default class Shot extends Entity {
 		} else if (this.position.x < -5) {
 			this.position.x += 10
 		}
-		
+
 		this.position.y += Math.sin(this.direction) * Shot.SPEED * delta
 		if (this.position.y > 5) {
 			this.position.y -= 10

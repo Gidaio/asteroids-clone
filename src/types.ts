@@ -5,14 +5,6 @@ export interface GameState {
 	entities: Entity[]
 }
 
-export interface Input {
-	right: boolean
-	up: boolean
-	left: boolean
-	down: boolean
-	space: boolean
-}
-
 
 type Point = [
 	number, // angle (will be multiplied by pi)

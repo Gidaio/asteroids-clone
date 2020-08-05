@@ -1,8 +1,9 @@
 import Asteroid from "./asteroid.js"
 import type Entity from "./entity.js"
+import { GameInput } from "./input.js"
 import Player from "./player.js"
 import Renderer from "./renderer.js"
-import type { GameState, Input } from "./types"
+import type { GameState } from "./types"
 
 
 export default class Game {
@@ -10,26 +11,22 @@ export default class Game {
 		entities: []
 	}
 	private renderer: Renderer
-	private input: Input = {
-		right: false,
-		up: false,
-		left: false,
-		down: false,
-		space: false
-	}
+	private input: GameInput
 	private entitiesToDestroy: Entity[] = []
 	private previousTimestamp: DOMHighResTimeStamp = performance.now()
 
 	public constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this.renderer = new Renderer(canvas, context)
+		this.input = new GameInput()
+
 		this.instantiateEntity(Player)
 		this.instantiateEntity(Asteroid)
 		this.instantiateEntity(Asteroid)
 		this.instantiateEntity(Asteroid)
 		this.instantiateEntity(Asteroid)
 
-		document.addEventListener("keydown", this.processInput.bind(this))
-		document.addEventListener("keyup", this.processInput.bind(this))
+		document.addEventListener("keydown", this.input.processRawInputEvent.bind(this.input))
+		document.addEventListener("keyup", this.input.processRawInputEvent.bind(this.input))
 		this.queueFrame()
 	}
 
@@ -47,6 +44,9 @@ export default class Game {
 
 	private loop(timestamp: DOMHighResTimeStamp) {
 		const delta = (timestamp - this.previousTimestamp) / 1000
+
+		// Input
+		this.input.updateInput()
 
 		// Updates
 		this.gameState.entities.forEach(entity => entity.onUpdate(delta, this.input))
@@ -79,31 +79,5 @@ export default class Game {
 
 	private queueFrame(): void {
 		requestAnimationFrame(this.loop.bind(this))
-	}
-
-	private processInput(event: KeyboardEvent): void {
-		const isKeyDown = event.type === "keydown" ? true : false
-
-		switch (event.code) {
-			case "ArrowRight":
-				this.input.right = isKeyDown
-				break
-
-			case "ArrowUp":
-				this.input.up = isKeyDown
-				break
-
-			case "ArrowLeft":
-				this.input.left = isKeyDown
-				break
-
-			case "ArrowDown":
-				this.input.down = isKeyDown
-				break
-
-			case "Space":
-				this.input.space = isKeyDown
-				break
-		}
 	}
 }

@@ -1,8 +1,9 @@
-import Entity from "./entity.js"
-import type { Input, Sprite } from "./types"
-import Vector2 from "./vector2.js"
 import Animator from "./animator.js"
+import Entity from "./entity.js"
+import type { Input } from "./input"
 import Shot from "./shot.js"
+import type { Sprite } from "./types"
+import Vector2 from "./vector2.js"
 
 
 const PLAYER_SPRITES: Sprite[] = [
@@ -90,11 +91,11 @@ export default class Player extends Entity {
 	private handleRotation(delta: number, input: Input): void {
 		let torque = 0
 
-		if (input.right) {
+		if (input.isButtonDown("right")) {
 			torque -= Player.TORQUE
 		}
 
-		if (input.left) {
+		if (input.isButtonDown("left")) {
 			torque += Player.TORQUE
 		}
 
@@ -115,7 +116,7 @@ export default class Player extends Entity {
 
 	private handlePosition(delta: number, input: Input): void {
 		const acceleration = new Vector2(0, 0)
-		if (input.up) {
+		if (input.isButtonDown("thrust")) {
 			acceleration.x = Math.cos(this.direction) * Player.ACCELERATION
 			acceleration.y = Math.sin(this.direction) * Player.ACCELERATION
 		}
@@ -145,7 +146,7 @@ export default class Player extends Entity {
 	}
 
 	private handleShooting(input: Input): void {
-		if (input.space) {
+		if (input.isButtonJustPressed("shoot")) {
 			const shot = this._game.instantiateEntity(Shot)
 			shot.position = new Vector2(
 				this.position.x + Math.cos(this.direction) * this.COLLISION_RADIUS,
@@ -156,7 +157,7 @@ export default class Player extends Entity {
 	}
 
 	private handleAnimation(input: Input): void {
-		if (input.up) {
+		if (input.isButtonDown("thrust")) {
 			this.animator.setAnimation("moving")
 		} else {
 			this.animator.setAnimation("idle")

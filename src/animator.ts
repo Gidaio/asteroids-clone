@@ -50,4 +50,4 @@ export default class Animator {
 }
 
 
-class AnimationError extends Error {}
+class AnimationError extends Error { }
