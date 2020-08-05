@@ -153,6 +153,7 @@ export default class Player extends Entity {
 				this.position.y + Math.sin(this.direction) * this.COLLISION_RADIUS
 			)
 			shot.direction = this.direction
+			shot.addedVelocity = this._linearVelocity.clone()
 		}
 	}
 

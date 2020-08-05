@@ -34,4 +34,8 @@ export default class Vector2 {
 	public magnitudeSquared(): number {
 		return this.x ** 2 + this.y ** 2
 	}
+
+	public clone(): Vector2 {
+		return new Vector2(this.x, this.y)
+	}
 }

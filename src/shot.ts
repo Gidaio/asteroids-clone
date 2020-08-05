@@ -1,6 +1,7 @@
 import Animator from "./animator.js"
 import Entity from "./entity.js"
 import type { Sprite } from "./types"
+import Vector2 from "./vector2.js"
 
 
 const SHOT_SPRITE: Sprite = {
@@ -19,7 +20,7 @@ export default class Shot extends Entity {
 
 	public readonly COLLISION_RADIUS = 0.0625
 
-	private static readonly SPEED = 10
+	private static readonly SPEED = 7
 	private static readonly MAX_LIFETIME = 1.5
 
 	private _lifetime = 0
@@ -34,20 +35,22 @@ export default class Shot extends Entity {
 		"default"
 	)
 
+	public addedVelocity: Vector2 = new Vector2(0, 0)
+
 	public onUpdate(delta: number) {
 		if (this._lifetime >= Shot.MAX_LIFETIME) {
 			this._game.destroyEntity(this)
 			return
 		}
 
-		this.position.x += Math.cos(this.direction) * Shot.SPEED * delta
+		this.position.x += (Math.cos(this.direction) * Shot.SPEED + this.addedVelocity.x) * delta
 		if (this.position.x > 5) {
 			this.position.x -= 10
 		} else if (this.position.x < -5) {
 			this.position.x += 10
 		}
 
-		this.position.y += Math.sin(this.direction) * Shot.SPEED * delta
+		this.position.y += (Math.sin(this.direction) * Shot.SPEED + this.addedVelocity.y) * delta
 		if (this.position.y > 5) {
 			this.position.y -= 10
 		} else if (this.position.y < -5) {
