@@ -21,7 +21,7 @@ export default class Shot extends Entity {
 	public readonly COLLISION_RADIUS = 0.0625
 
 	private static readonly SPEED = 7
-	private static readonly MAX_LIFETIME = 1.5
+	private static readonly MAX_LIFETIME = 0.75
 
 	private _lifetime = 0
 
