@@ -1,3 +1,4 @@
+import type Entity from "./entity"
 import type { GameState, Sprite } from "./types"
 import Vector2 from "./vector2.js"
 
@@ -20,15 +21,7 @@ export default class Renderer {
 		this.drawSpace()
 		this.context.strokeStyle = "#FFF"
 		this.context.beginPath()
-		gameState.entities.forEach(entity => {
-			if (!entity.animator) {
-				return
-			}
-
-			const sprite = entity.animator.getSprite()
-
-			this.drawPolarSprite(sprite, entity.position, entity.direction)
-		})
+		gameState.entities.forEach(this.drawEntity.bind(this))
 		this.context.stroke()
 	}
 
@@ -44,6 +37,44 @@ export default class Renderer {
 		const left = this.canvas.width / 2 - minimumDimension / 2
 		this.context.fillRect(left, top, minimumDimension, minimumDimension)
 		this.ppm = minimumDimension / Renderer.GAME_DIMENSION
+	}
+
+	private drawEntity(entity: Entity) {
+		if (!entity.animator) {
+			return
+		}
+
+		const sprite = entity.animator.getSprite()
+		const leftAndBottomBoundary = -Renderer.GAME_DIMENSION / 2 + sprite.drawRadius
+		const rightAndTopBoundary = Renderer.GAME_DIMENSION / 2 - sprite.drawRadius
+
+		const positionsToDraw = [entity.position.clone()]
+
+		if (entity.position.x < leftAndBottomBoundary) {
+			const newPosition = entity.position.clone()
+			newPosition.x += Renderer.GAME_DIMENSION
+			positionsToDraw.push(newPosition)
+		} else if (entity.position.x > rightAndTopBoundary) {
+			const newPosition = entity.position.clone()
+			newPosition.x -= Renderer.GAME_DIMENSION
+			positionsToDraw.push(newPosition)
+		}
+
+		if (entity.position.y < leftAndBottomBoundary) {
+			positionsToDraw.push(...positionsToDraw.map(position => {
+				const newPosition = position.clone()
+				newPosition.y += Renderer.GAME_DIMENSION
+				return newPosition
+			}))
+		} else if (entity.position.y > rightAndTopBoundary) {
+			positionsToDraw.push(...positionsToDraw.map(position => {
+				const newPosition = position.clone()
+				newPosition.y -= Renderer.GAME_DIMENSION
+				return newPosition
+			}))
+		}
+
+		positionsToDraw.forEach(position => this.drawPolarSprite(sprite, position, entity.direction))
 	}
 
 	private drawPolarSprite(sprite: Sprite, position: Vector2, direction: number): void {
