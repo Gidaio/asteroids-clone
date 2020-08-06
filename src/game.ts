@@ -4,6 +4,7 @@ import { GameInput } from "./input.js"
 import Player from "./player.js"
 import Renderer from "./renderer.js"
 import type { GameState } from "./types"
+import Vector2 from "./vector2.js"
 
 
 export default class Game {
@@ -13,6 +14,7 @@ export default class Game {
 	private renderer: Renderer
 	private input: GameInput
 	private entitiesToDestroy: Entity[] = []
+	private entitiesToCreate: Entity[] = []
 	private previousTimestamp: DOMHighResTimeStamp = performance.now()
 
 	public constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
@@ -20,20 +22,27 @@ export default class Game {
 		this.input = new GameInput()
 
 		this.instantiateEntity(Player)
-		this.instantiateEntity(Asteroid)
-		this.instantiateEntity(Asteroid)
-		this.instantiateEntity(Asteroid)
-		this.instantiateEntity(Asteroid)
+		this.createAsteroid()
+		this.createAsteroid()
+		this.createAsteroid()
+		this.createAsteroid()
 
 		document.addEventListener("keydown", this.input.processRawInputEvent.bind(this.input))
 		document.addEventListener("keyup", this.input.processRawInputEvent.bind(this.input))
 		this.queueFrame()
 	}
 
+	private createAsteroid(): void {
+		const asteroid = this.instantiateEntity(Asteroid)
+		const angle = Math.random() * 2 * Math.PI
+		const x = Math.cos(angle) * 2.5
+		const y = Math.sin(angle) * 2.5
+		asteroid.position = new Vector2(x, y)
+	}
+
 	public instantiateEntity<T extends Entity>(entityType: new (game: Game) => T): T {
 		const entity = new entityType(this)
-		entity.onCreate()
-		this.gameState.entities.push(entity)
+		this.entitiesToCreate.push(entity)
 
 		return entity
 	}
@@ -61,6 +70,13 @@ export default class Game {
 				}
 			}
 		})
+
+		// Entity Management
+		this.entitiesToCreate.forEach(entity => {
+			this.gameState.entities.push(entity)
+			entity.onCreate()
+		})
+		this.entitiesToCreate = []
 
 		this.entitiesToDestroy.forEach(entity => {
 			const entityIndex = this.gameState.entities.indexOf(entity)

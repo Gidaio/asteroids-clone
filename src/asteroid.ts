@@ -14,21 +14,13 @@ export default class Asteroid extends Entity {
 	}
 
 	private _velocity = new Vector2(0, 0)
-	public get velocity(): Vector2 {
-		return this._velocity
-	}
-
 	private _rotationRate = 0
 
 	public size: number = 2
 
 	public onCreate(): void {
-		let xPos = Math.random() < 0.5 ? -2 : 2
-		let yPos = Math.random() < 0.5 ? -2 : 2
-
-		this.position = new Vector2(xPos, yPos)
 		this.direction = Math.random() * 2 * Math.PI
-		this._rotationRate = Math.random() * Math.PI / 2
+		this._rotationRate = Math.random() * Math.PI / (this.size * 2 + 1)
 
 		const pointRadii = new Array<number>(9).fill(0).map(() => 1 - Math.random() / 2) as PointRadii
 		const sprite: Sprite = { drawRadius: this.COLLISION_RADIUS, points: pointRadii.map((radius, index) => [index * 2 / 9, radius]) }
@@ -46,7 +38,7 @@ export default class Asteroid extends Entity {
 		)
 
 		const direction = Math.random() * 2 * Math.PI
-		const actualSpeed = (1 + Math.random() * 1 - 1 / 2) / 2
+		const actualSpeed = (1 + Math.random() * 1 - 1 / 2) / (this.size + 1)
 		this._velocity = new Vector2(Math.cos(direction), Math.sin(direction)).multiply(actualSpeed)
 	}
 
@@ -58,6 +50,21 @@ export default class Asteroid extends Entity {
 		}
 		if (Math.abs(this.position.y) > 5) {
 			this.position.y -= Math.sign(this.position.y) * 10
+		}
+	}
+
+	public onCollision(entity: Entity) {
+		if (entity.TYPE === "SHOT") {
+			if (this.size === 0) {
+				this._game.destroyEntity(this)
+			} else {
+				this.size -= 1
+				this.onCreate()
+
+				const sisterAsteroid = this._game.instantiateEntity(Asteroid)
+				sisterAsteroid.position = this.position.clone()
+				sisterAsteroid.size = this.size
+			}
 		}
 	}
 }
