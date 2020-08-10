@@ -38,4 +38,13 @@ export default class Vector2 {
 	public clone(): Vector2 {
 		return new Vector2(this.x, this.y)
 	}
+
+	public normalize(): Vector2 {
+		const magnitude = Math.sqrt(this.magnitudeSquared())
+
+		return new Vector2(
+			this.x / magnitude,
+			this.y / magnitude
+		)
+	}
 }

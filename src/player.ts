@@ -1,4 +1,5 @@
 import Animator from "./animator.js"
+import Debris from "./debris.js"
 import Entity from "./entity.js"
 import type { Input } from "./input"
 import Shot from "./shot.js"
@@ -85,6 +86,22 @@ export default class Player extends Entity {
 		if (entity.TYPE === "ASTEROID") {
 			console.log(this, entity)
 			this._game.destroyEntity(this)
+			const neDebris = this._game.instantiateEntity(Debris)
+			const nwDebris = this._game.instantiateEntity(Debris)
+			const swDebris = this._game.instantiateEntity(Debris)
+			const seDebris = this._game.instantiateEntity(Debris)
+			neDebris.position = this.position
+			nwDebris.position = this.position
+			swDebris.position = this.position
+			seDebris.position = this.position
+			neDebris.linearVelocity = new Vector2(1, 1).normalize().multiply(2)
+			nwDebris.linearVelocity = new Vector2(1, -1).normalize().multiply(2)
+			swDebris.linearVelocity = new Vector2(-1, -1).normalize().multiply(2)
+			seDebris.linearVelocity = new Vector2(-1, 1).normalize().multiply(2)
+			neDebris.angularVelocity = 2 * Math.PI
+			nwDebris.angularVelocity = 2 * Math.PI
+			swDebris.angularVelocity = 2 * Math.PI
+			seDebris.angularVelocity = 2 * Math.PI
 		}
 	}
 
