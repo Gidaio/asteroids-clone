@@ -1,7 +1,7 @@
 import Animator from "./animator.js"
 import Entity from "./entity.js"
+import type { Input } from "./input.js"
 import Vector2 from "./vector2.js"
-import { Input } from "./types.js"
 
 
 export default class Debris extends Entity {
