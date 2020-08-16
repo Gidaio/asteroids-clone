@@ -1,10 +1,8 @@
-import Asteroid from "./asteroid.js"
 import type Entity from "./entity.js"
 import { GameInput } from "./input.js"
-import Player from "./player.js"
+import LevelManager from "./levelManager.js"
 import Renderer from "./renderer.js"
 import type { GameState } from "./types"
-import Vector2 from "./vector2.js"
 
 
 export default class Game {
@@ -21,23 +19,11 @@ export default class Game {
 		this.renderer = new Renderer(canvas, context)
 		this.input = new GameInput()
 
-		this.instantiateEntity(Player)
-		this.createAsteroid()
-		this.createAsteroid()
-		this.createAsteroid()
-		this.createAsteroid()
+		this.instantiateEntity(LevelManager)
 
 		document.addEventListener("keydown", this.input.processRawInputEvent.bind(this.input))
 		document.addEventListener("keyup", this.input.processRawInputEvent.bind(this.input))
 		this.queueFrame()
-	}
-
-	private createAsteroid(): void {
-		const asteroid = this.instantiateEntity(Asteroid)
-		const angle = Math.random() * 2 * Math.PI
-		const x = Math.cos(angle) * 2.5
-		const y = Math.sin(angle) * 2.5
-		asteroid.position = new Vector2(x, y)
 	}
 
 	public instantiateEntity<T extends Entity>(entityType: new (game: Game) => T): T {
@@ -49,6 +35,18 @@ export default class Game {
 
 	public destroyEntity(entity: Entity): void {
 		this.entitiesToDestroy.push(entity)
+	}
+
+	public destroyAllEntitiesOfType(type: string): void {
+		this.gameState.entities.forEach(entity => {
+			if (entity.TYPE === type) {
+				this.entitiesToDestroy.push(entity)
+			}
+		})
+	}
+
+	public getEntityCountOfType(type: string): number {
+		return this.gameState.entities.filter(entity => entity.TYPE === type).length
 	}
 
 	private loop(timestamp: DOMHighResTimeStamp) {
@@ -72,12 +70,6 @@ export default class Game {
 		})
 
 		// Entity Management
-		this.entitiesToCreate.forEach(entity => {
-			this.gameState.entities.push(entity)
-			entity.onCreate()
-		})
-		this.entitiesToCreate = []
-
 		this.entitiesToDestroy.forEach(entity => {
 			const entityIndex = this.gameState.entities.indexOf(entity)
 			if (entityIndex == null) {
@@ -87,6 +79,12 @@ export default class Game {
 			}
 		})
 		this.entitiesToDestroy = []
+
+		this.entitiesToCreate.forEach(entity => {
+			this.gameState.entities.push(entity)
+			entity.onCreate()
+		})
+		this.entitiesToCreate = []
 
 		this.renderer.render(this.gameState)
 		this.previousTimestamp = timestamp
