@@ -1,7 +1,7 @@
 import type Entity from "./entity.js"
 import { GameInput } from "./input.js"
-import LevelManager from "./levelManager.js"
 import Renderer from "./renderer.js"
+import TitleManager from "./titleManager.js"
 import type { GameState } from "./types"
 
 
@@ -19,7 +19,7 @@ export default class Game {
 		this.renderer = new Renderer(canvas, context)
 		this.input = new GameInput()
 
-		this.instantiateEntity(LevelManager)
+		this.instantiateEntity(TitleManager)
 
 		document.addEventListener("keydown", this.input.processRawInputEvent.bind(this.input))
 		document.addEventListener("keyup", this.input.processRawInputEvent.bind(this.input))

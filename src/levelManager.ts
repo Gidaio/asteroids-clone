@@ -1,6 +1,7 @@
 import Asteroid from "./asteroid.js"
 import Entity from "./entity.js"
 import Player from "./player.js"
+import TitleManager from "./titleManager.js"
 import Vector2 from "./vector2.js"
 
 
@@ -9,20 +10,31 @@ export default class LevelManager extends Entity {
 	public readonly COLLISION_RADIUS = 0
 
 	private _levelFinished = true
+	private _playerDied = false
 	private _counter = 0
 	private _level = 0
 
 	public onUpdate(delta: number): void {
-		if (this._levelFinished) {
+		if (this._levelFinished || this._playerDied) {
 			this._counter -= delta
 			if (this._counter <= 0) {
-				this._levelFinished = false
-				this.createNextLevel()
+				if (this._levelFinished) {
+					this._levelFinished = false
+					this.createNextLevel()
+				} else {
+					this._game.destroyAllEntitiesOfType("ASTEROID")
+					this._game.destroyAllEntitiesOfType("SHOT")
+					this._game.destroyEntity(this)
+					this._game.instantiateEntity(TitleManager)
+				}
 			}
 		} else {
 			if (this._game.getEntityCountOfType("ASTEROID") === 0) {
 				this._levelFinished = true
 				this._counter = 3
+			} else if (this._game.getEntityCountOfType("PLAYER") === 0) {
+				this._playerDied = true
+				this._counter = 4
 			}
 		}
 	}
